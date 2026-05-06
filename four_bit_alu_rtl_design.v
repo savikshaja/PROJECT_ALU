@@ -55,9 +55,9 @@ always @(posedge clk or posedge rst) begin
             g <= 1'b0;
             e <= 1'b0;
             l <= 1'b0;
-		err<=1'b0;
-		oflow<=1'b0;
-		cout<=1'b0;
+            err<=1'b0;
+            cout<=1'b0;
+            oflow<=1'b0;
             if (mode && (i_cmd == 4'b1001 || i_cmd == 4'b1010))
                 cycle_count <= 2'b10; //if mode and comd of multipication cycle=2 because input already captures
             else
@@ -80,8 +80,9 @@ always @(posedge clk or posedge rst) begin
                     4'b0000: begin          //ADDITION
                         if (inp_valid == 2'b11)
                         begin
-                            {cout, res[WIDTH-1:0]} <= opa + opb;
-                            res[2*WIDTH-1:WIDTH]<= {WIDTH{1'b0}};
+                            res<= opa + opb;
+                            cout<=res[WIDTH];
+                            res[2*WIDTH-1:WIDTH+1]<= {WIDTH{1'b0}};
                         end
                         else
                             err <= 1'b1;
@@ -96,7 +97,8 @@ always @(posedge clk or posedge rst) begin
                     end
                     4'b0010: begin          //ADD WITH CIN
                         if (inp_valid == 2'b11) begin
-                            {cout, res[WIDTH-1:0]} <= opa + opb + cin_r;
+                            res<= opa + opb + cin_r;
+                            cout<=res[WIDTH];
                             res[2*WIDTH-1:WIDTH] <= {WIDTH{1'b0}};
                         end 
                         else 
@@ -161,10 +163,15 @@ always @(posedge clk or posedge rst) begin
                         end
                     end
                     4'b1011: begin          //SIGNED ADDITION
-                        if (inp_valid == 2'b11) begin
+                        if (inp_valid == 2'b11)
+                        begin
                             {cout, res[WIDTH-1:0]} <= $signed(opa) + $signed(opb);
                             res[2*WIDTH-1:WIDTH]   <= {WIDTH{1'b0}};
                             oflow <= (opa[WIDTH-1] == opb[WIDTH-1]) && (res[WIDTH-1] != opa[WIDTH-1]);
+                            //comparator
+                            if($signed(opa)>$signed(opb))g<=1'b1;
+                            else if ($signed(opa)<$signed(opb))l<=1'b1;
+                            else e<=1'b1;
                         end 
                         else 
                             err <= 1'b1;
@@ -174,19 +181,23 @@ always @(posedge clk or posedge rst) begin
                             {cout, res[WIDTH-1:0]} <= $signed(opa) - $signed(opb);
                             res[2*WIDTH-1:WIDTH]   <= {WIDTH{1'b0}};
                             oflow <= (opa[WIDTH-1] != opb[WIDTH-1]) &&(res[WIDTH-1] != opa[WIDTH-1]);
+                            //comparator
+                            if($signed(opa)>$signed(opb))g<=1'b1;
+                            else if ($signed(opa)<$signed(opb))l<=1'b1;
+                            else e<=1'b1;
                         end 
                         else 
                             err <= 1'b1;
                     end
                     default:
                     begin
-			res <= {(2*WIDTH){1'b0}};
-			g <= 1'b0;
-			e <= 1'b0;
-			l <= 1'b0;
-			err<=1'b1;
-			cout<=1'b0;
-			oflow<=1'b0;
+                     res <= {(2*WIDTH){1'b0}};
+                     err<= 1'b1;
+                     g <= 1'b0;
+                     e <= 1'b0;
+                     l <= 1'b0;
+                     cout<=1'b0;
+                     oflow<=1'b0;
                     end
                             
                 endcase
@@ -224,15 +235,15 @@ always @(posedge clk or posedge rst) begin
                         end
                     end
                     default:
-			begin
-			 res <= {(2*WIDTH){1'b0}};
-			 g <= 1'b0;
-                     	e <= 1'b0;
-                     	l <= 1'b0;
-			err<=1'b1;
-			cout<=1'b0;
-			oflow<=1'b0;
-			end
+                    begin
+                         res <= {(2*WIDTH){1'b0}};
+                         err<=1'b1;
+                         g <= 1'b0;
+                        e <= 1'b0;
+                        l <= 1'b0;
+                        cout<=1'b0;
+                        oflow<=1'b0;
+                    end
                 endcase
             end
         end
@@ -256,9 +267,15 @@ always @(posedge clk or posedge rst) begin
             end 
             else begin //calulate at 2 cycle after capture store in register
                 if (cmd == 4'b1001)     //if cmd is 9
+                begin
+                    res<={(2*WIDTH){1'bx}};
                     res_multi <= (opa + 1) * (opb + 1);
+                end
                 else        //cmd is 10
+                begin
+                    res<={(2*WIDTH){1'bx}};
                     res_multi <= (opa << 1) * opb;
+                end
                 cycle_count <= 2'b11;
             end
         end
