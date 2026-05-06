@@ -81,7 +81,7 @@ always @(posedge clk or posedge rst) begin
                         if (inp_valid == 2'b11)
                         begin
                             res<= opa + opb;
-                            cout<=res[WIDTH];
+                            cout<=({1'b0,opa}+{1'b0,opb})>>WIDTH;
                             res[2*WIDTH-1:WIDTH+1]<= {WIDTH{1'b0}};
                         end
                         else
