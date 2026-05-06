@@ -55,6 +55,9 @@ always @(posedge clk or posedge rst) begin
             g <= 1'b0;
             e <= 1'b0;
             l <= 1'b0;
+		err<=1'b0;
+		oflow<=1'b0;
+		cout<=1'b0;
             if (mode && (i_cmd == 4'b1001 || i_cmd == 4'b1010))
                 cycle_count <= 2'b10; //if mode and comd of multipication cycle=2 because input already captures
             else
@@ -177,10 +180,13 @@ always @(posedge clk or posedge rst) begin
                     end
                     default:
                     begin
-                     res <= {(2*WIDTH){1'b0}};
-                     g <= 1'b0;
-                     e <= 1'b0;
-                     l <= 1'b0;
+			res <= {(2*WIDTH){1'b0}};
+			g <= 1'b0;
+			e <= 1'b0;
+			l <= 1'b0;
+			err<=1'b1;
+			cout<=1'b0;
+			oflow<=1'b0;
                     end
                             
                 endcase
@@ -217,7 +223,16 @@ always @(posedge clk or posedge rst) begin
                                 res <= {{WIDTH{1'b0}},(opa >> opb[rotate_value-1:0]) |(opa << (WIDTH - opb[rotate_value-1:0]))};
                         end
                     end
-                    default: res <= {(2*WIDTH){1'b0}};
+                    default:
+			begin
+			 res <= {(2*WIDTH){1'b0}};
+			 g <= 1'b0;
+                     	e <= 1'b0;
+                     	l <= 1'b0;
+			err<=1'b1;
+			cout<=1'b0;
+			oflow<=1'b0;
+			end
                 endcase
             end
         end
