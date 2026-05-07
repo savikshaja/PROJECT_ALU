@@ -284,8 +284,14 @@ always @(posedge clk or posedge rst) begin
             res <= res_multi;
             cycle_count <= 2'b00;
         end
-
     end
+	else
+	begin
+//		res<=res;
+		err<=1'b1;
+	//	cout<=1'b0;
+	//	oflow<=1'b0;
+	end
 end
 
 endmodule
