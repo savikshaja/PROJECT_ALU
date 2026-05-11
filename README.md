@@ -135,32 +135,8 @@
 
 ---
 
-## Coverage Summary
-
-| Coverage Type | Bins | Hits | Misses | Coverage |
-|---|---|---|---|---|
-| Statements | 85 | 85 | 0 | 100.00% |
-| Branches | 94 | 94 | 0 | 100.00% |
-| FEC Expressions | 6 | 4 | 2 | 66.66% |
-| FEC Conditions | 15 | 14 | 1 | 93.33% |
-| Toggles | 130 | 113 | 17 | 86.92% |
-| FSMs / States / Transitions | 8 | 8 | 0 | 100.00% |
-
 **DUT Overall Coverage: 91.15%**
 **Top-Level Overall Coverage: 88.41%**
-
-### Coverage Gaps
-
-- **FEC Expressions (66.66%)** — 2 bins missed in multiply
-  hold condition; targeted stimulus needed
-- **Toggle (86.92%)** — 17 bits untoggled; primarily upper
-  bits of RES stuck at 0 due to carry truncation RTL bug
-- **test_multi branch (50%)** — insufficient mid-operation
-  scenario variation in multiply test task
-- **Testbench toggle (41.95%)** — internal testbench signals
-  not fully exercised; richer test_multi stimulus required
-
----
 
 ## Tools Used
 
