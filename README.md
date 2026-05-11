@@ -1,5 +1,3 @@
----
-
 ## DUT Overview
 
 | Parameter | Value |
@@ -9,7 +7,7 @@
 | Parameter CMDWD | 4-bit (16 commands) |
 | Modes | Arithmetic (MODE=1), Logical (MODE=0) |
 | Total Operations | 27 |
-| Output Width | 2×W (8-bit) |
+| Output Width | 2xW (8-bit) |
 | Design Style | Synchronous, Registered, Pipelined |
 
 ### Inputs
@@ -27,6 +25,16 @@
 | `INP_VALID` | 2 | Operand validity |
 
 ### Outputs
+
+| Port | Width | Description |
+|---|---|---|
+| `RES` | 2xW | Result |
+| `COUT` | 1 | Carry out |
+| `OFLOW` | 1 | Overflow flag |
+| `G` | 1 | Greater-than flag |
+| `L` | 1 | Less-than flag |
+| `E` | 1 | Equal flag |
+| `ERR` | 1 | Error flag |
 
 | Port | Width | Description |
 |---|---|---|
